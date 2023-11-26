@@ -21,8 +21,8 @@ path = "src/main.rs"
 
 [[bin]]
 name = "sub-client"
-path = "src/sub_client.rs"
+path = "examples/sub_client.rs"
 
 [[bin]]
 name = "pub-client"
-path = "src/pub_client.rs"
+path = "examples/pub_client.rs"
