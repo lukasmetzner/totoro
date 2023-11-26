@@ -1,5 +1,6 @@
 use anyhow::Result;
-use crate::{Totoro, config::TotoroConfig};
+use crate::config::TotoroConfig;
+use crate::server::TotoroServer;
 
 pub struct TotoroBuilder {
     totoro_config: TotoroConfig
@@ -25,7 +26,7 @@ impl TotoroBuilder {
         self
     }
 
-    pub async fn build(self) -> Result<Totoro> {
-        Totoro::new(self.totoro_config).await
+    pub async fn build(self) -> Result<TotoroServer> {
+        TotoroServer::new(self.totoro_config).await
     }
 }
