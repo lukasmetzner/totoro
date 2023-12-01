@@ -9,7 +9,7 @@ use tokio::{
         Mutex,
     },
 };
-use tracing::info;
+use tracing::{debug, info};
 
 use crate::{config, message};
 
@@ -68,7 +68,7 @@ impl TotoroServer {
                     Message::Data(message)
                         .send_message(stream, &totoro_config)
                         .await?;
-                    info!("Sent message to subscriber");
+                    debug!("Sent message to subscriber");
                 }
                 None => continue,
             }
@@ -87,7 +87,7 @@ impl TotoroServer {
                 Message::Data(data) => sender.send(data).await?,
                 _ => panic!("Expected message type Data here"),
             }
-            info!("Pushed message to queue");
+            debug!("Pushed message to queue");
         }
     }
 
@@ -100,17 +100,31 @@ impl TotoroServer {
                 ClientType::Subscriber => {
                     let shared_receiver = self.shared_receiver.clone();
                     tokio::spawn(async move {
-                        TotoroServer::handle_subscriber(&mut stream, shared_receiver, totoro_config)
-                            .await
-                            .unwrap();
+                        let task_result = TotoroServer::handle_subscriber(
+                            &mut stream,
+                            shared_receiver,
+                            totoro_config,
+                        )
+                        .await;
+                        match task_result {
+                            Ok(t) => t,
+                            Err(_) => info!("Client closed connection"),
+                        }
                     });
                 }
                 ClientType::Publisher => {
                     let shared_sender = self.shared_sender.clone();
                     tokio::spawn(async move {
-                        TotoroServer::handle_publisher(&mut stream, shared_sender, totoro_config)
-                            .await
-                            .unwrap();
+                        let this = TotoroServer::handle_publisher(
+                            &mut stream,
+                            shared_sender,
+                            totoro_config,
+                        )
+                        .await;
+                        match this {
+                            Ok(t) => t,
+                            Err(_) => info!("Client closed connection"),
+                        }
                     });
                 }
             };

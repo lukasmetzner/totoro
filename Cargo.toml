@@ -16,7 +16,7 @@ name = "totoro"
 path = "src/lib.rs"
 
 [[bin]]
-name = "server"
+name = "totoro"
 path = "src/main.rs"
 
 [[bin]]
