@@ -2,7 +2,7 @@
   <img src="assets/totoro-logo-no-bg.png" alt="Logo" width="200"/>
 </p>
 <h1 align="center">Totoro</h1>
-<h3 align="center">A single topic message queue server written in Rust</h3>
+<h3 align="center">A single topic in-memory message queue server written in Rust</h3>
 
 ## Description 
 - One instance has exactly one queue
@@ -11,7 +11,7 @@
 
 ## Run Server
 ```
-cargo run --bin server
+cargo run --bin totoro
 ```
 
 ## Run Examples
