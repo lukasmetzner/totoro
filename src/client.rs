@@ -1,7 +1,25 @@
 use anyhow::Result;
 use tokio::net::TcpStream;
 
-use crate::{config::TotoroConfig, message::Message};
+use crate::{
+    config::TotoroConfig,
+    message::{ClientType, Message},
+};
+
+async fn register_helper(
+    config: &TotoroConfig,
+    client_type: ClientType,
+) -> Result<(TcpStream, Message)> {
+    let mut stream = TcpStream::connect(&config.listen_address).await?;
+
+    // Register at server as publisher or subscriber
+    Message::Registration(client_type)
+        .send_message(&mut stream, &config)
+        .await?;
+    let message = Message::from_stream(&mut stream, &config).await?;
+
+    Ok((stream, message))
+}
 
 pub struct TotoroPublisher {
     totoro_config: TotoroConfig,
@@ -10,15 +28,11 @@ pub struct TotoroPublisher {
 
 impl TotoroPublisher {
     pub async fn new(totoro_config: TotoroConfig) -> Result<Self> {
-        let mut stream = TcpStream::connect(&totoro_config.listen_address).await?;
-        Message::Registration(crate::message::ClientType::Publisher)
-            .send_message(&mut stream, &totoro_config)
-            .await?;
-        let ack = Message::from_stream(&mut stream, &totoro_config).await?;
-        match ack {
+        let (stream, message) = register_helper(&totoro_config, ClientType::Publisher).await?;
+        match message {
             Message::RegistrationAck => Ok(Self {
                 totoro_config,
-                stream
+                stream,
             }),
             _ => panic!("Did not receive ack message"),
         }
@@ -38,15 +52,11 @@ pub struct TotoroSubscriber {
 
 impl TotoroSubscriber {
     pub async fn new(totoro_config: TotoroConfig) -> Result<Self> {
-        let mut stream = TcpStream::connect(&totoro_config.listen_address).await?;
-        Message::Registration(crate::message::ClientType::Subscriber)
-            .send_message(&mut stream, &totoro_config)
-            .await?;
-        let ack = Message::from_stream(&mut stream, &totoro_config).await?;
-        match ack {
+        let (stream, message) = register_helper(&totoro_config, ClientType::Subscriber).await?;
+        match message {
             Message::RegistrationAck => Ok(Self {
                 totoro_config,
-                stream
+                stream,
             }),
             _ => panic!("Did not receive ack message"),
         }
