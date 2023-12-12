@@ -1,7 +1,7 @@
 use totoro::{message::{ClientType, Message}, config::DEFAULT_MAX_BUFFER_SIZE};
 
 #[test]
-pub fn test_message_to_buffer() {
+pub fn test_message_to_buffer_conversion() {
     let sub_registration = Message::Registration(ClientType::Subscriber).to_buffer(&Default::default());
     assert_eq!(sub_registration[0], 0); // package type
     assert_eq!(sub_registration[1], 0); // client type
