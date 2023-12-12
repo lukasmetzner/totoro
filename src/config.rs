@@ -1,6 +1,6 @@
 const DEFAULT_MAX_CHANNEL_SIZE: usize = 64000;
-const DEFAULT_MAX_BUFFER_SIZE: usize = 1024;
 const DEFAULT_LISTEN_ADDRESS: &str = "0.0.0.0:8000";
+pub const DEFAULT_MAX_BUFFER_SIZE: usize = 1024;
 
 #[derive(Clone)]
 pub struct TotoroConfig {

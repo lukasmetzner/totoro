@@ -14,15 +14,19 @@ tracing-subscriber = "0.3.18"
 [lib]
 name = "totoro"
 path = "src/lib.rs"
+test = false
 
 [[bin]]
 name = "totoro"
 path = "src/main.rs"
+test = false
 
 [[bin]]
 name = "sub-client"
 path = "examples/sub_client.rs"
+test = false
 
 [[bin]]
 name = "pub-client"
 path = "examples/pub_client.rs"
+test = false
